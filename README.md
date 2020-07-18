@@ -2,5 +2,5 @@
 
 Integrantes:
 
-Edison S. Jumbo
+Edison S. Jumbo &
 Christian Mainato.
