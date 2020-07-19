@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "295334979172",
+    "firebase_url": "https://chatapp-99c4f.firebaseio.com",
+    "project_id": "chatapp-99c4f",
+    "storage_bucket": "chatapp-99c4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295334979172:android:e9dd78d9cc840401b4a171",
+        "android_client_info": {
+          "package_name": "com.example.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "295334979172-vp28cgdoh0qkm706adnn3d1d9mqg2558.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatapp",
+            "certificate_hash": "257bbc45ae9fb836f3d08069d524a678a5e6650b"
+          }
+        },
+        {
+          "client_id": "295334979172-usdv59dddgf2bht847het5p9vpcvcduh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB39RKvSNSAjv6wraYWG5t2v8BXsFKGO3U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "295334979172-usdv59dddgf2bht847het5p9vpcvcduh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
