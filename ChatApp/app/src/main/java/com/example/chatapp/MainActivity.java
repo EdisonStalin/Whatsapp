@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
              RequestNewGroup();
 
         }if(item.getItemId() == R.id.main_find_friends_option){
-
+            SendUserToFindFriendsActivity();
         }
          return true;
     }
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         buider.setTitle("Ingrese nombre del grupo :");
 
         final EditText groupNameField = new EditText(MainActivity.this);
-        groupNameField.setHint("e.g Codigo Café");
+        groupNameField.setHint("Grupo Tópicos");
         buider.setView(groupNameField);
 
         buider.setPositiveButton("Crear", new DialogInterface.OnClickListener() {
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buider.setNegativeButton("Crear", new DialogInterface.OnClickListener() {
+        buider.setNegativeButton("Cerrar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
-        finish();
     }
 
     private void SendUserToSettingsActivity() {
@@ -193,5 +192,10 @@ public class MainActivity extends AppCompatActivity {
         settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(settingsIntent);
         finish();
+    }
+
+    private void SendUserToFindFriendsActivity() {
+        Intent FindFriendsIntent = new Intent(MainActivity.this, FindFriendsActivity.class);
+        startActivity(FindFriendsIntent);
     }
 }
