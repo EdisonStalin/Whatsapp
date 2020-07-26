@@ -41,6 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
         ChatRequestRef = FirebaseDatabase.getInstance().getReference().child("Chat Requests");
+        ContactsRef = FirebaseDatabase.getInstance().getReference().child("Contacts");
 
         receiverUserID = getIntent().getExtras().get("visit_user_id").toString();
         senderUserID =  mAuth.getCurrentUser().getUid();
@@ -123,7 +124,25 @@ public class ProfileActivity extends AppCompatActivity {
                                 });
 
                             }
+                        }else {
+                            ContactsRef.child(senderUserID)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.hasChild(receiverUserID)){
+                                                Current_State = "friends";
+                                                SendMessageRequestButton.setText("Eliminar este contacto");
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
                         }
+
+
                     }
 
                     @Override
@@ -140,6 +159,10 @@ public class ProfileActivity extends AppCompatActivity {
                         SendChatRequest();
                     }if (Current_State.equals("request_sent")){
                         CancelChatRequest();
+                    }if (Current_State.equals("request_received")){
+                        AcceptChatRequest();
+                    }if (Current_State.equals("friends")){
+                            RemoveSpecificContact();
                     }
                 }
 
@@ -149,6 +172,34 @@ public class ProfileActivity extends AppCompatActivity {
             SendMessageRequestButton.setVisibility(View.INVISIBLE);
         }
     }
+
+    private void RemoveSpecificContact() {
+        ContactsRef.child(senderUserID).child(receiverUserID)
+                .removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            ContactsRef.child(receiverUserID).child(senderUserID)
+                                    .removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+                                                SendMessageRequestButton.setEnabled(true);
+                                                Current_State = "new";
+                                                SendMessageRequestButton.setText("Enviar Mensaje");
+
+                                                DeclineMessageRequestButton.setVisibility(View.INVISIBLE);
+                                                DeclineMessageRequestButton.setEnabled(false);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
+    }
+
     private void SendChatRequest() {
         ChatRequestRef.child(senderUserID).child(receiverUserID)
                 .child("request_type").setValue("sent")
@@ -173,6 +224,51 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void AcceptChatRequest(){
+        ContactsRef.child(senderUserID).child(receiverUserID)
+                .child("Contacts").setValue("Saved")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            ContactsRef.child(receiverUserID).child(senderUserID)
+                                    .child("Contacts").setValue("Saved")
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+                                                ChatRequestRef.child(senderUserID).child(receiverUserID)
+                                                        .removeValue()
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()){
+                                                                    ChatRequestRef.child(receiverUserID).child(senderUserID)
+                                                                            .removeValue()
+                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                    SendMessageRequestButton.setEnabled(true);
+                                                                                    Current_State = "friends ";
+                                                                                    SendMessageRequestButton.setText("Eliminar este contacto");
+
+                                                                                    DeclineMessageRequestButton.setVisibility(View.INVISIBLE);
+                                                                                    DeclineMessageRequestButton.setEnabled(false);
+                                                                                }
+                                                                            });
+                                                                }
+
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
+    }
+
 
     private void CancelChatRequest(){
         ChatRequestRef.child(senderUserID).child(receiverUserID)
