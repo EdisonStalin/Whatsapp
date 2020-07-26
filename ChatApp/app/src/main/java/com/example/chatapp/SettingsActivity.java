@@ -62,6 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
         RootRef = FirebaseDatabase.getInstance().getReference();
         UserProfileImagesRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
+
         InitializeFields();
 
         userName.setVisibility(View.INVISIBLE);
@@ -101,7 +102,7 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(SettingsToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setTitle("Configuraciones de la cuenta");
+        getSupportActionBar().setTitle("Configuraciones Cuenta");
     }
 
     @Override
@@ -177,12 +178,12 @@ public class SettingsActivity extends AppCompatActivity {
         }if (TextUtils.isEmpty(setStatus)){
             Toast.makeText(this, "Favor escriba su Estado...", Toast.LENGTH_SHORT).show();
         }else{
-            HashMap<String, String> profileMap = new HashMap<>();
+            HashMap<String, Object> profileMap = new HashMap<>();
             profileMap.put("uid",currentUserID);
             profileMap.put("name", setUserName);
             profileMap.put("status", setStatus);
 
-            RootRef.child("Users").child(currentUserID).setValue(profileMap)
+            RootRef.child("Users").child(currentUserID).updateChildren(profileMap)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
