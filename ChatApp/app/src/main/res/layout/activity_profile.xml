@@ -55,15 +55,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/visit_profile_status"
-        android:layout_marginLeft="65dp"
         android:layout_marginTop="15dp"
+        android:layout_marginLeft="65dp"
         android:layout_marginRight="65dp"
-        android:background="@drawable/buttons"
-        android:text="Enviar Solicitud Amistad"
-        android:textAllCaps="false"
         android:textColor="@android:color/background_light"
+        android:background="@drawable/buttons"
+        android:textStyle="bold"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:text="Enviar Mensaje"
+        android:textAllCaps="false"
+        />
 
 
     <Button
@@ -75,7 +76,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginRight="65dp"
         android:background="@drawable/buttons"
-        android:text="Cancelar solicitud de Amistad"
+        android:text="Cancelar solicitud de chat"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="20sp"
