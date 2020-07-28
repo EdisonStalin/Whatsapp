@@ -149,7 +149,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
                         if (task.isSuccessful())
                         {
                             loadingBar.dismiss();
-                            Toast.makeText(PhoneLoginActivity.this, "Congratulations, you're logged in Successfully.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PhoneLoginActivity.this, "Felicitaciones, tu cuenta se a creado exitosamente.", Toast.LENGTH_SHORT).show();
                             SendUserToMainActivity();
                         }
                         else
