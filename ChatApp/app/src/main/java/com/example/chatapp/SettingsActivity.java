@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,9 +24,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -56,6 +60,8 @@ public class SettingsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         RootRef = FirebaseDatabase.getInstance().getReference();
+        UserProfileImagesRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
+
 
         InitializeFields();
 
@@ -90,7 +96,13 @@ public class SettingsActivity extends AppCompatActivity {
         userName = (EditText) findViewById(R.id.set_user_name);
         userStatus = (EditText) findViewById(R.id.set_profile_status);
         userProfileImage = (CircleImageView) findViewById(R.id.set_profile_image);
+        loadingBar = new ProgressDialog(this);
 
+        SettingsToolBar = (Toolbar) findViewById(R.id.settings_toolbar);
+        setSupportActionBar(SettingsToolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setTitle("Configuraciones Cuenta");
     }
 
     @Override
@@ -108,6 +120,52 @@ public class SettingsActivity extends AppCompatActivity {
         }if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
         {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if (resultCode == RESULT_OK){
+                loadingBar.setTitle("Establecer imagen de perfil");
+                loadingBar.setMessage("Favor espere, su imagen de perfil se está actualizando...");
+                loadingBar.setCanceledOnTouchOutside(false);
+                loadingBar.show();
+
+                Uri resultUri = result.getUri();
+
+                StorageReference filePath = UserProfileImagesRef.child(currentUserID + ".jpg");
+                    filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                            if (task.isSuccessful())
+                            {
+                                Toast.makeText(SettingsActivity.this, "Se a guardado satisfactoriamente la imagen de perfil...",Toast.LENGTH_SHORT).show();
+                                final  String downloaedUrl = task.getResult().getStorage().getDownloadUrl().toString();
+
+
+                                RootRef.child("Users").child(currentUserID).child("image")
+                                        .setValue(downloaedUrl)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()){
+                                                    Toast.makeText(SettingsActivity.this, "Imagen se a guardado en la base, exitosamente...",Toast.LENGTH_SHORT).show();
+                                                    loadingBar.dismiss();
+                                                }else{
+                                                    String message = task.getException().toString();
+                                                    Toast.makeText(SettingsActivity.this, "Error: "+ message,Toast.LENGTH_SHORT).show();
+                                                    loadingBar.dismiss();
+                                                }
+
+                                            }
+                                        });
+
+
+                            }else{
+                                String message = task.getException().toString();
+                                Toast.makeText(SettingsActivity.this, "Error: "+ message,Toast.LENGTH_SHORT).show();
+                                loadingBar.dismiss();
+                            }
+                        }
+                    });
+            }
         }
     }
 
@@ -120,12 +178,12 @@ public class SettingsActivity extends AppCompatActivity {
         }if (TextUtils.isEmpty(setStatus)){
             Toast.makeText(this, "Favor escriba su Estado...", Toast.LENGTH_SHORT).show();
         }else{
-            HashMap<String, String> profileMap = new HashMap<>();
+            HashMap<String, Object> profileMap = new HashMap<>();
             profileMap.put("uid",currentUserID);
             profileMap.put("name", setUserName);
             profileMap.put("status", setStatus);
 
-            RootRef.child("Users").child(currentUserID).setValue(profileMap)
+            RootRef.child("Users").child(currentUserID).updateChildren(profileMap)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -159,6 +217,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                             userName.setText(retrieveUserName);
                             userStatus.setText(retrieveStatus);
+                            Picasso.get().load(retrieveProfileImage).into(userProfileImage);
 
 
                         }else if ((dataSnapshot.exists()) && (dataSnapshot.hasChild("name"))){

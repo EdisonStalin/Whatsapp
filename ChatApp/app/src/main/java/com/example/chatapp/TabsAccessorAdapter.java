@@ -28,6 +28,9 @@ public class TabsAccessorAdapter extends FragmentPagerAdapter {
             case 2:
                 ContactsFragment contatsFragment = new ContactsFragment();
                 return contatsFragment;
+            case 3:
+                RequestsFragment requestsFragment = new RequestsFragment();
+                return requestsFragment;
 
             default:
                 return null;
@@ -38,7 +41,7 @@ public class TabsAccessorAdapter extends FragmentPagerAdapter {
     public int getCount()
     {
 
-        return 3;
+        return 4;
     }
 
     @Nullable
@@ -47,13 +50,16 @@ public class TabsAccessorAdapter extends FragmentPagerAdapter {
         switch (position)
         {
             case 0:
-                return "Chats";
+                return "Chat";
 
             case 1:
-                return "Groups";
+                return "Grupo";
 
             case 2:
-                return "Contacts";
+                return "Contactos";
+
+            case 3:
+                return "Peticiones";
 
             default:
                 return null;
